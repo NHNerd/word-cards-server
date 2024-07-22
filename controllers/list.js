@@ -39,6 +39,22 @@ class ListController {
       return res.status(500).json({ message: 'Server error' });
     }
   }
+
+  async refreshOrders(req, res) {
+    try {
+      const lists = req.body;
+
+      for (let i = 0; i < lists.length; i++) {
+        const _id = lists[i]._id;
+        await ListModel.updateOne({ _id }, { $set: { order: lists[i].order } });
+      }
+
+      return res.status(200).json({ message: 'Lists updated successfully' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  }
 }
 
 export default new ListController();
