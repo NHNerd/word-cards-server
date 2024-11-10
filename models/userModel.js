@@ -14,6 +14,10 @@ const UserSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  updateDate: {
+    type: Date,
+    default: Date.now,
+  },
   isActivated: {
     // Is activated an account by email?
     type: Boolean,

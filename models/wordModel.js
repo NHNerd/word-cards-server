@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const wordSchema = mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   listId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'List',
@@ -9,11 +13,15 @@ const wordSchema = mongoose.Schema({
     type: String,
     required: [true, 'Enter a word'],
   },
+  updateWord: {
+    type: Date,
+    default: Date.now,
+  },
   translate: {
     type: String,
     required: [true, 'Enter a translate or description'],
   },
-  createdDate: {
+  updateTranslate: {
     type: Date,
     default: Date.now,
   },
@@ -26,8 +34,12 @@ const wordSchema = mongoose.Schema({
     default: 0,
   },
   status: {
-    type: Number,
-    default: 0,
+    type: String,
+    default: 'new',
+  },
+  updateStatus: {
+    type: Date,
+    default: Date.now,
   },
 });
 

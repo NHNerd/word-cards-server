@@ -9,12 +9,20 @@ const ListSchema = mongoose.Schema({
     type: String,
     required: [true, 'Enter a list name'],
   },
-  createdDate: {
+  updateListName: {
     type: Date,
     default: Date.now,
   },
   order: Number,
+  updateOrder: {
+    type: Date,
+    default: Date.now,
+  },
   gameCount: Number,
+  updateGameCount: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const ListModel = mongoose.model('List', ListSchema); //? User - the collection name
