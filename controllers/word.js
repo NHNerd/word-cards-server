@@ -46,10 +46,7 @@ class WordController {
           userId: userId,
           listId: listId,
           word: word,
-          updateWord: new Date(),
           translate: translate,
-          updateTranslate: new Date(),
-          updateStatus: new Date(),
         }))
       );
 
