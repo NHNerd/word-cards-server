@@ -139,6 +139,36 @@ class ListController {
       session.endSession();
     }
   }
+  async patchListField(req, res) {
+    try {
+      const { _id, field, updateTime } = req.body;
+
+      if (!_id || !field || !updateTime) {
+        return res
+          .status(400)
+          .json({ message: 'Invalid request: _id and field and updateTime are required' });
+      }
+      const existingList = await ListModel.findById(_id);
+      if (!existingList) {
+        return res.status(404).json({ message: 'List not found in DB' });
+      }
+
+      let messageName = 'List name';
+      if (isNaN(Number(field))) {
+        // String - list name
+        await ListModel.updateOne({ _id }, { $set: { listName: field, updateListName: updateTime } });
+      } else {
+        // Number - game count
+        await ListModel.updateOne({ _id }, { $set: { gameCount: field, updateGameCount: updateTime } });
+        messageName = 'Game count';
+      }
+
+      return res.status(200).json({ message: `${messageName} "${field}" updated successfully` });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  }
 
   async refreshOrdersSync(req, res) {
     const session = await mongoose.startSession();
