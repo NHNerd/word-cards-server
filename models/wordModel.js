@@ -33,11 +33,11 @@ const wordSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  status: {
-    type: String,
-    default: 'new',
+  know: {
+    type: Boolean,
+    default: false,
   },
-  updateStatus: {
+  updateKnow: {
     type: Date,
     default: Date.now,
   },

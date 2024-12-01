@@ -23,6 +23,7 @@ class WordController {
       });
 
       const newWordDTO = newWord.toObject();
+      delete newWordDTO.userId;
       delete newWordDTO.__v;
 
       return res
@@ -52,6 +53,7 @@ class WordController {
 
       const newWordsDTO = newWords.map((newWord) => {
         const wordDTO = newWord.toObject();
+        delete wordDTO.userId;
         delete wordDTO.__v;
         return wordDTO;
       });
@@ -65,51 +67,72 @@ class WordController {
     }
   }
 
-  async getAllListWords(req, res) {
-    try {
-      const { listId } = req.query;
-
-      const allWords = await WordModel.find({ listId: listId });
-
-      if (!allWords || allWords.length === 0) {
-        return res.status(404).json({ message: 'No words found for this list' });
-      }
-
-      return res.status(200).json({ message: 'all words: \n' + allWords });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: 'Server error' });
-    }
-  }
-
   async getAll(req, res) {
     try {
-      // const { allListsId } = req.query;
-
-      // const Allwords = {};
-      // await Promise.all(
-      //   allListsId.map(async (listId) => {
-      //     const words = await WordModel.find({ listId });
-
-      //     if (!words || words.length === 0) return;
-
-      //     Allwords[listId] = words;
-      //   })
-      // );
-
-      // if (Object.keys(Allwords).length === 0) {
-      //   return res.status(404).json({ message: 'No words found for any list' });
-      // }
-
       const { userId } = req.query;
 
-      const allWords = await WordModel.find({ userId });
+      const allWords = await WordModel.find({ userId }).select('-__v -userId');
 
       if (!allWords || allWords.length === 0) {
         return res.status(404).json({ message: 'No words found for this user' });
       }
 
       return res.status(200).json({ allWords });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  }
+
+  async patchWordField(req, res) {
+    try {
+      const { userId, _id, word, translate, updateWord, updateTranslate } = req.body;
+
+      if (!userId || !_id || !word || !translate || !updateWord || !updateTranslate) {
+        return res.status(400).json({
+          message:
+            'Invalid request: userId, _id, word, translate, updateWord, updateTranslate are required',
+        });
+      }
+      // console.log(userId, _id, word, translate, updateWord, updateTranslate);
+
+      const existingWord = await WordModel.findById(_id);
+      if (!existingWord) {
+        return res.status(404).json({ message: 'Word not found in DB' });
+      }
+
+      let messageName = 'Word & translate';
+
+      const newUpdateWord = new Date(updateWord);
+      const newUpdateTranslate = new Date(updateTranslate);
+
+      if (existingWord.updateWord < newUpdateWord && existingWord.updateTranslate < newUpdateTranslate) {
+        await WordModel.updateOne(
+          { _id },
+          {
+            $set: {
+              word: word,
+              updateWord: newUpdateWord,
+              translate: translate,
+              updateTranslate: newUpdateTranslate,
+            },
+          }
+        );
+      } else {
+        if (existingWord.updateWord < newUpdateWord) {
+          await WordModel.updateOne({ _id }, { $set: { word: word, updateWord: newUpdateWord } });
+          messageName = 'Word';
+        }
+        if (existingWord.updateTranslate < newUpdateTranslate) {
+          await WordModel.updateOne(
+            { _id },
+            { $set: { translate: translate, updateTranslate: newUpdateTranslate } }
+          );
+          messageName = 'Translate';
+        }
+      }
+
+      return res.status(200).json({ message: `${messageName} updated successfully` });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Server error' });
