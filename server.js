@@ -29,8 +29,7 @@ app.use(
       'http://172.19.0.1:5173',
       'http://192.168.1.45:5173',
       'http://192.168.1.45:5174',
-      'http://192.168.1.45:5173/card-swiper/',
-      'https://nhnerd.github.io/card-swiper/',
+      'https://nhnerd.github.io',
     ],
   })
 );
