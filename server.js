@@ -19,29 +19,24 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true, //? provede cookies
-    origin: '*', // for all
-    // origin: [
-    //   'http://localhost:5173',
-    //   'http://192.168.1.4:5173',
-    //   'http://192.168.1.5:5173',
-    //   'http://192.168.1.6:5173',
-    //   'http://192.168.1.7:5173',
-    //   'http://172.19.0.1:5173',
-    //   'http://192.168.1.45:5173',
-    //   'http://192.168.1.45:5174',
-    // ],
+    // origin: '*', // for all
+    origin: [
+      'http://localhost:5173',
+      'http://192.168.1.4:5173',
+      'http://192.168.1.5:5173',
+      'http://192.168.1.6:5173',
+      'http://192.168.1.7:5173',
+      'http://172.19.0.1:5173',
+      'http://192.168.1.45:5173',
+      'http://192.168.1.45:5174',
+      'http://192.168.1.45:5173/card-swiper/',
+      'https://nhnerd.github.io/card-swiper/',
+    ],
   })
 );
 app.use('/apiUser', routerUser);
 app.use('/apiList', routerList);
 app.use('/apiWord', routerWord);
-
-// app.use('/api', routerCM);
-
-// app.post('/', (req, res) => {
-//   console.log(req.body);
-//   res.status(200).json('sasalka');
-// });
 
 // Connect mongoDB
 mongoose
