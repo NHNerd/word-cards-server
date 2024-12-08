@@ -252,7 +252,10 @@ class ListController {
       // Новое значение для updateOrder
       const updatedAllLists = await ListModel.updateMany({ userId }, { updateOrder: updateOrder });
       console.log(`updatedAllLists =  "${updatedAllLists}`);
-      return res.status(200).json({ message: `List with id "${_id}" deleted successfully.` });
+
+      return res
+        .status(200)
+        .json({ message: `List "${candidateList.listName}" with id "${_id}" deleted successfully.` });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Server error' });

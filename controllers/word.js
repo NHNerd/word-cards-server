@@ -138,6 +138,26 @@ class WordController {
       return res.status(500).json({ message: 'Server error' });
     }
   }
+
+  async delete(req, res) {
+    try {
+      const { userId, _id } = req.params;
+
+      const candidateList = await WordModel.findOne({ userId, _id });
+      if (!candidateList) {
+        return res.status(404).json({ message: 'Word with _id"' + _id + '" is not exists :(' });
+      }
+
+      await WordModel.deleteOne({ userId, _id });
+
+      return res
+        .status(200)
+        .json({ message: `Word "${candidateList.word}" with id "${_id}" deleted successfully.` });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  }
 }
 
 export default new WordController();
