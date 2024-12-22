@@ -41,10 +41,11 @@ const wordSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
-
-// Создать уникальный индекс для поля listName в пределах каждого пользователя
-// wordSchema.index({ user: 1, listName: 1 }, { unique: true });
 
 const WordModel = mongoose.model('Word', wordSchema); //? User - the collection name
 
