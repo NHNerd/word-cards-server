@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import WordModel from '../models/wordModel.js';
 
 class WordController {
@@ -94,7 +95,6 @@ class WordController {
             'Invalid request: userId, _id, word, translate, updateWord, updateTranslate are required',
         });
       }
-      // console.log(userId, _id, word, translate, updateWord, updateTranslate);
 
       const existingWord = await WordModel.findById(_id);
       if (!existingWord) {
@@ -139,6 +139,57 @@ class WordController {
     }
   }
 
+  async patchWordFielCorrectWrongdMany(req, res) {
+    try {
+      const { listWordsNewDTO } = req.body;
+
+      if (listWordsNewDTO.length1 === 0) {
+        return res.status(400).json({
+          message: 'Invalid request:  DTO words array are required',
+        });
+      }
+
+      const session = await mongoose.startSession();
+      session.startTransaction();
+
+      const existingWords = await WordModel.find({ listId: { $in: listWordsNewDTO[0].listId } });
+      if (existingWords.length === 0) {
+        return res.status(409).json({
+          message: "Words don't exist in DB.(patch fields many)",
+        });
+      }
+      // console.log(listWordsNewDTO);
+
+      for (let i = 0; i < listWordsNewDTO.length; i++) {
+        const { _id, listId, correct, wrong } = listWordsNewDTO[i];
+
+        await WordModel.updateOne(
+          { _id },
+          {
+            $set: {
+              correct: correct,
+              wrong: wrong,
+            },
+          }
+        ).session(session);
+      }
+
+      await session.commitTransaction();
+
+      return (
+        res
+          .status(200)
+          //? deletedCount - mongo DB method
+          .json({
+            message: `All words updated(wrong/correct) successfully :)`,
+          })
+      );
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  }
+
   async delete(req, res) {
     try {
       const { userId, _id } = req.params;
@@ -152,7 +203,7 @@ class WordController {
 
       return res
         .status(200)
-        .json({ message: `Word "${candidateList.word}" with id "${_id}" deleted successfully.` });
+        .json({ message: `Word "${candidateList.word}" with id "${_id}" deleted successfully :)` });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Server error' });
