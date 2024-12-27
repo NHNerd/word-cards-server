@@ -23,6 +23,10 @@ const ListSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  sessionCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const ListModel = mongoose.model('List', ListSchema); //? User - the collection name

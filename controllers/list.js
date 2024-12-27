@@ -170,6 +170,29 @@ class ListController {
     }
   }
 
+  async patchListSessionCount(req, res) {
+    try {
+      const { _id, sessionCount } = req.body;
+
+      if (!_id || !sessionCount) {
+        return res
+          .status(400)
+          .json({ message: 'Invalid request: list _id and sessionCount are required' });
+      }
+      const existingList = await ListModel.findById(_id);
+      if (!existingList) {
+        return res.status(404).json({ message: 'List not found in DB' });
+      }
+
+      await ListModel.updateOne({ _id }, { $set: { sessionCount: sessionCount } });
+
+      return res.status(200).json({ message: `session count - "${sessionCount}" updated successfully` });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  }
+
   async refreshOrdersSync(req, res) {
     const session = await mongoose.startSession();
     session.startTransaction();

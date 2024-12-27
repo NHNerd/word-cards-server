@@ -158,10 +158,9 @@ class WordController {
           message: "Words don't exist in DB.(patch fields many)",
         });
       }
-      // console.log(listWordsNewDTO);
 
       for (let i = 0; i < listWordsNewDTO.length; i++) {
-        const { _id, listId, correct, wrong } = listWordsNewDTO[i];
+        const { _id, correct, wrong } = listWordsNewDTO[i];
 
         await WordModel.updateOne(
           { _id },
