@@ -37,6 +37,7 @@ class UserController {
   async login(req, res) {
     try {
       const { email, pass } = req.body;
+      console.log(email, pass);
 
       // check: is existe user with this email
       const candidate = await UserModel.findOne({ email: email });

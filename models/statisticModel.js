@@ -1,37 +1,19 @@
 import mongoose from 'mongoose';
 
+const DaySchema = new mongoose.Schema({
+  date: { type: String, required: true },
+  wordAdd: { type: Number, default: 0 },
+  session: { type: Number, default: 0 },
+  timeSec: { type: Number, default: 0 },
+  comboMax: { type: Number, default: 0 },
+  correct: { type: Number, default: 0 },
+  wrong: { type: Number, default: 0 },
+});
+
 const statisticSchema = mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  type: {
-    type: String,
-    default: 'lastSession',
-    required: [true, 'lastSession | day | week | month | year | allTime'],
-  },
-  duration: {
-    type: Number,
-    required: true,
-  },
-  correct: {
-    type: Number,
-    required: true,
-  },
-  wrong: {
-    type: Number,
-    required: true,
-  },
-  combo: {
-    type: Number,
-    required: true,
-  }, // Max session combo
-  createdDate: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  year: { type: Number, required: true },
+  days: { type: [DaySchema], default: [] },
 });
 
 const StatisticModel = mongoose.model('Statistic', statisticSchema); //? User - the collection name
