@@ -63,9 +63,73 @@ class StatisticController {
         statisticCollection.markModified('days');
         statistic = await statisticCollection.save();
 
-        message = `collection statistic - updated (${session.length} day${
-          session.length > 1 ? 's' : ''
-        })`;
+        message = `collection statistic - updated (${session.length} day${session.length > 1 ? 's' : ''})`;
+      }
+
+      return res.status(status).json({ message, statistic });
+    } catch (error) {
+      console.error('⚠️ Error in patchSessionDay:', error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  }
+
+  async patchAddWord(req, res) {
+    try {
+      const { userId, wordAdded } = req.body;
+
+      if (!userId || !wordAdded) {
+        return res.status(400).json({ message: 'Invalid input data (userId or session)' });
+      }
+
+      const todayDate = wordAdded[wordAdded.length - 1].date;
+      const year = todayDate.split('-')[0];
+
+      const statisticCollection = await statisticModel.findOne({ userId, year });
+
+      let statistic;
+      let status = 200;
+      let message = '';
+
+      if (!statisticCollection) {
+        //? Collection don't exist => create ➕
+        statistic = await statisticModel.create({
+          userId: userId,
+          year: year,
+          days: wordAdded,
+        });
+        status = 201;
+        message = `collection statistic - ${year} created`;
+      } else {
+        let isNeedSort = false;
+        for (let i = 0; i < wordAdded.length; i++) {
+          const day = wordAdded[i].date;
+          const lastDateInDB =
+            statisticCollection.days[statisticCollection.days.length - 1]?.date || '1970-01-01';
+          if (new Date(day).getTime() > new Date(lastDateInDB).getTime()) {
+            //? day > last day in DB => push new Day✈️
+            statisticCollection.days.push(wordAdded[i]);
+          } else {
+            //? day < last day in DB => add new || patch existe🔧
+            const alreadyExistDay = statisticCollection.days.find((item) => item.date === day);
+
+            if (alreadyExistDay) {
+              //? (day < last) && exist => PATCH
+              alreadyExistDay.wordAdd += wordAdded[i].wordAdded;
+            } else {
+              //? (day < last) && not exist => push && sort
+              statisticCollection.days.push(wordAdded[i]);
+              isNeedSort = true;
+            }
+          }
+        }
+
+        if (isNeedSort) statisticCollection.days.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        // Mark as modified & save
+        statisticCollection.markModified('days');
+        statistic = await statisticCollection.save();
+
+        message = `collection statistic - updated (${wordAdded.length} day${wordAdded.length > 1 ? 's' : ''})`;
       }
 
       return res.status(status).json({ message, statistic });
