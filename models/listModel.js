@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
+import DateSchema from './schemas/dateSchema.js';
 
 const ListSchema = mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  createDate: DateSchema,
   listName: {
     type: String,
     required: [true, 'Enter a list name'],

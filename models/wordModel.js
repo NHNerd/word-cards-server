@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import DateSchema from './schemas/dateSchema.js';
 
 const wordSchema = mongoose.Schema({
   userId: {
@@ -9,6 +10,7 @@ const wordSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'List',
   },
+  createDate: DateSchema,
   word: {
     type: String,
     required: [true, 'Enter a word'],
@@ -41,10 +43,10 @@ const wordSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  createdDate: {
-    type: Date,
-    default: Date.now,
-  },
+  // createdDate: {
+  //   type: Date,
+  //   default: Date.now,
+  // },
 });
 
 const WordModel = mongoose.model('Word', wordSchema); //? User - the collection name

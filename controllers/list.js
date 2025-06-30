@@ -7,7 +7,7 @@ class ListController {
     session.startTransaction();
 
     try {
-      const { userId, listName } = req.body;
+      const { userId, createDate, listName } = req.body;
 
       // check: is existe list with this name && userId
       const candidate = await ListModel.findOne({ userId, listName }).session(session);
@@ -25,6 +25,7 @@ class ListController {
         [
           {
             userId,
+            createDate,
             listName,
             order: 0,
             gameCount: 12,
@@ -68,9 +69,7 @@ class ListController {
         return listObj;
       });
 
-      return res
-        .status(201)
-        .json({ message: 'list(s) from LS added to DB success :) \n', addedListsDTO });
+      return res.status(201).json({ message: 'list(s) from LS added to DB success :) \n', addedListsDTO });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Server error' });
@@ -124,9 +123,7 @@ class ListController {
 
       for (let i = 0; i < lists.length; i++) {
         const { _id, order, updateOrder } = lists[i];
-        await ListModel.updateOne({ _id }, { $set: { order: order, updateOrder: updateOrder } }).session(
-          session
-        );
+        await ListModel.updateOne({ _id }, { $set: { order: order, updateOrder: updateOrder } }).session(session);
       }
 
       await session.commitTransaction();
@@ -144,9 +141,7 @@ class ListController {
       const { _id, field, updateTime } = req.body;
 
       if (!_id || !field || !updateTime) {
-        return res
-          .status(400)
-          .json({ message: 'Invalid request: _id and field and updateTime are required' });
+        return res.status(400).json({ message: 'Invalid request: _id and field and updateTime are required' });
       }
       const existingList = await ListModel.findById(_id);
       if (!existingList) {
@@ -175,9 +170,7 @@ class ListController {
       const { _id, sessionCount } = req.body;
 
       if (!_id || !sessionCount) {
-        return res
-          .status(400)
-          .json({ message: 'Invalid request: list _id and sessionCount are required' });
+        return res.status(400).json({ message: 'Invalid request: list _id and sessionCount are required' });
       }
       const existingList = await ListModel.findById(_id);
       if (!existingList) {
@@ -205,9 +198,7 @@ class ListController {
         const { _id, order, updateOrder } = DTOupdateDB_allOrder[i];
         // console.log('_id, ', _id, 'updateOrder: ', updateOrder);
 
-        await ListModel.updateOne({ _id }, { $set: { order: order, updateOrder: updateOrder } }).session(
-          session
-        );
+        await ListModel.updateOne({ _id }, { $set: { order: order, updateOrder: updateOrder } }).session(session);
       }
 
       await session.commitTransaction();

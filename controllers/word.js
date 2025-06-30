@@ -4,7 +4,7 @@ import WordModel from '../models/wordModel.js';
 class WordController {
   async add(req, res) {
     try {
-      const { userId, listId, word, translate } = req.body;
+      const { userId, createDate, listId, word, translate } = req.body;
 
       // check: is existe this word
       const candidate = await WordModel.findOne({ userId: userId, listId: listId, word: word });
@@ -14,11 +14,12 @@ class WordController {
           .json({ message: `Word "${word}" already exists for user "${userId}" in lsit "${listId}":(` });
 
       const newWord = await WordModel.create({
-        userId: userId,
-        listId: listId,
-        word: word,
+        userId,
+        listId,
+        createDate,
+        word,
         updateWord: new Date(),
-        translate: translate,
+        translate,
         updateTranslate: new Date(),
         updateStatus: new Date(),
       });
@@ -59,9 +60,7 @@ class WordController {
         return wordDTO;
       });
 
-      return res
-        .status(201)
-        .json({ message: 'bulk of words added success :) \n', newWords: newWordsDTO });
+      return res.status(201).json({ message: 'bulk of words added success :) \n', newWords: newWordsDTO });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Server error' });
@@ -91,8 +90,7 @@ class WordController {
 
       if (!userId || !_id || !word || !translate || !updateWord || !updateTranslate) {
         return res.status(400).json({
-          message:
-            'Invalid request: userId, _id, word, translate, updateWord, updateTranslate are required',
+          message: 'Invalid request: userId, _id, word, translate, updateWord, updateTranslate are required',
         });
       }
 
