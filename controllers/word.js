@@ -18,10 +18,7 @@ class WordController {
         listId,
         createDate,
         word,
-        updateWord: new Date(),
         translate,
-        updateTranslate: new Date(),
-        updateStatus: new Date(),
       });
 
       const newWordDTO = newWord.toObject();
@@ -45,11 +42,12 @@ class WordController {
         return res.status(400).json({ message: `Invalid input: words must be a non-empty array :(` });
 
       const newWords = await WordModel.insertMany(
-        words.map(({ word, translate }) => ({
-          userId: userId,
-          listId: listId,
-          word: word,
-          translate: translate,
+        words.map(({ word, translate, createDate }) => ({
+          userId,
+          createDate,
+          listId,
+          word,
+          translate,
         }))
       );
 
